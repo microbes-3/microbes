@@ -1,7 +1,7 @@
 all: build run
 build:
-	javac -cp .:/usr/share/java/weka.jar Microbes.java
+	javac -cp src:/usr/share/java/weka.jar src/Microbes.java
 run:
-	java -cp .:/usr/share/java/weka.jar Microbes
+	java -cp src:/usr/share/java/weka.jar Microbes
 test:
-	java -cp .:/usr/share/java/junit4.jar org.junit.runner.JUnitCore MicrobesTest
+	java -cp src:/usr/share/java/weka.jar:/usr/share/java/junit4.jar org.junit.runner.JUnitCore MicrobesTest
