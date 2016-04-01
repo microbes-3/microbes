@@ -2,7 +2,7 @@ import java.util.HashMap;
 
 public class WeightedDecisionMaker implements DecisionMaker {
 	protected double[] weights;
-	
+
 	public WeightedDecisionMaker() {}
 
 	public WeightedDecisionMaker(double[] weights) {
@@ -29,7 +29,12 @@ public class WeightedDecisionMaker implements DecisionMaker {
 		for (int i = 0; i < votes.length; i++) {
 			int vote = (int) votes[i];
 
-			double result = results.get(vote) + this.weights[i];
+			Double old = results.get(vote);
+			if (old == null) {
+				old = 0.;
+			}
+
+			double result = old + this.weights[i];
 			results.put(vote, result);
 
 			if (result > max) {
@@ -41,4 +46,3 @@ public class WeightedDecisionMaker implements DecisionMaker {
 		return maxLabel;
 	}
 }
-
