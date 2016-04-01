@@ -1,7 +1,11 @@
+CLASSPATH=src:/usr/share/java/weka.jar:/usr/share/java/junit4.jar
+MAINCLASS=Microbes
+TESTCLASS=org.junit.runner.JUnitCore
+
 all: build run
 build:
-	javac -cp src:/usr/share/java/weka.jar:/usr/share/java/junit4.jar src/*.java
+	javac -cp $(CLASSPATH) src/*.java
 run:
-	java -cp src:/usr/share/java/weka.jar Microbes
+	java -cp $(CLASSPATH) $(MAINCLASS)
 test:
-	java -cp src:/usr/share/java/weka.jar:/usr/share/java/junit4.jar org.junit.runner.JUnitCore WeightedDecisionMakerTest
+	java -cp $(CLASSPATH) $(TESTCLASS) WeightedDecisionMakerTest
