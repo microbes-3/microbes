@@ -129,7 +129,12 @@ public class selection_variables {
 	public static ArrayList<Instances> instTest (ArrayList<Instances> datas, Instances data){
 		ArrayList<Instances> instTest = new ArrayList<Instances> ();
 		for(int i = 0; i < datas.size(); i++){
-			
+			Instances test = new Instances(data);
+			for(int j = 0; j < 45-datas.get(i).numAttributes(); j++){
+				int numAtt = (int)(Math.random()*(test.numAttributes()-1));
+				test.deleteAttributeAt(numAtt);
+			}
+			instTest.add(test);
 		}
 		return instTest;
 	}
@@ -138,9 +143,8 @@ public class selection_variables {
 		datas.add(data);
 	}
 
-
-
-
+/** Exemple permettant de comprendre un peu la classe individuellement 
+ * 
 	public static void main(String[] args) throws Exception {
 		ArrayList<Instances> datas = debut();
 		
@@ -158,6 +162,13 @@ public class selection_variables {
 			System.out.println();
 		}
 		System.out.println("Fin");
-
-	}
+		
+		ArrayList<Instances> instaTest = instTest(datas, data);
+		System.out.println(instaTest.size());
+		for(int i = 0; i < instaTest.size(); i++){
+			System.out.println("instaTest.get("+i+").numAttributes() = "+instaTest.get(i).numAttributes());
+		}
+		System.out.println("Fin");
+		
+	}*/
 }
