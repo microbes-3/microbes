@@ -9,10 +9,6 @@ import java.util.ArrayList;
 
 
 public class selection_variables {	
-	
-	public static ArrayList<Instances> debut(){
-		return new ArrayList<Instances> ();
-	}
 
 	public static Instances chargeDonnees(String path) throws Exception {		
 		DataSource source = new DataSource(path);
@@ -23,7 +19,10 @@ public class selection_variables {
 	}
 
 
-	protected static void filtres(Instances data, ArrayList<Instances> datas) throws Exception{
+	protected static ArrayList<Instances> filtres(Instances data) throws Exception{
+		
+		ArrayList<Instances> datas = new ArrayList<Instances> ();
+		
 		AttributeSelection filter11 = new AttributeSelection(); 	 //Creation d'un nouvel attribut de selection	
 		AttributeSelection filter12 = new AttributeSelection();
 		AttributeSelection filter13 = new AttributeSelection();
@@ -40,11 +39,18 @@ public class selection_variables {
 		eval.setOptions(new String[] {"-P", "1", "-E", "1"});
 		
 		GreedyStepwise search = new GreedyStepwise();
-		search.setSearchBackwards(true);
-		search.setOptions(new String[] {"-R", "-T", "0.055", "-N", "-1"});
-
+		search.setSearchBackwards(true);		
+		String[][] GreedyOpt = 
+			{ {"-R", "-T", "0.055", "-N", "-1"}, {"-R", "-T", "0.0525", "-N", "-1"}, 
+			{"-R", "-T", "0.050", "-N", "-1"}, {"-R", "-T", "0.0475", "-N", "-1"},
+			{"-R", "-T", "0.045", "-N", "-1"}, {"-R", "-T", "0.04", "-N", "-1"},
+			{"-R", "-T", "0.035", "-N", "-1"}, {"-R", "-T", "0.03", "-N", "-1"}};
+		search.setOptions(GreedyOpt[0]);
+		
 		BestFirst search2 = new BestFirst();
-		search2.setOptions(new String[] {"-D", "1", "-N", "5"});
+		String[][] BestOpt = 
+			{ {"-D", "1", "-N", "5"}, {"-D", "2", "-N", "5"}, {"-D", "0", "-N", "5"} };
+		search2.setOptions(BestOpt[0]);
 		
 		filter11.setInputFormat(data);
 		filter12.setInputFormat(data);
@@ -61,69 +67,70 @@ public class selection_variables {
 		filter11.setEvaluator(eval);
 		filter11.setSearch(search);
 		Instances newData = Filter.useFilter(data, filter11);
-		saveData(newData, datas);
+		datas.add(newData);
 		
-		search.setOptions(new String[] {"-R", "-T", "0.0525", "-N", "-1"});
+		search.setOptions(GreedyOpt[1]);
 		filter17.setEvaluator(eval);
 		filter17.setSearch(search);
 		newData = Filter.useFilter(data, filter17);
-		saveData(newData, datas);
+		datas.add(newData);
 		
-		search.setOptions(new String[] {"-R", "-T", "0.050", "-N", "-1"});
+		search.setOptions(GreedyOpt[2]);
 		filter12.setEvaluator(eval);
 		filter12.setSearch(search);
 		newData = Filter.useFilter(data, filter12);
-		saveData(newData, datas);
+		datas.add(newData);
 		
-		search.setOptions(new String[] {"-R", "-T", "0.0475", "-N", "-1"});
+		search.setOptions(GreedyOpt[3]);
 		filter18.setEvaluator(eval);
 		filter18.setSearch(search);
 		newData = Filter.useFilter(data, filter18);
-		saveData(newData, datas);
+		datas.add(newData);
 		
-		search.setOptions(new String[] {"-R", "-T", "0.045", "-N", "-1"});
+		search.setOptions(GreedyOpt[4]);
 		filter13.setEvaluator(eval);
 		filter13.setSearch(search);
 		newData = Filter.useFilter(data, filter13);
-		saveData(newData, datas);
+		datas.add(newData);
 		
-		search.setOptions(new String[] {"-R", "-T", "0.04", "-N", "-1"});
+		search.setOptions(GreedyOpt[5]);
 		filter16.setEvaluator(eval);
 		filter16.setSearch(search);
 		newData = Filter.useFilter(data, filter16);
-		saveData(newData, datas);
+		datas.add(newData);
 		
-		search.setOptions(new String[] {"-R", "-T", "0.035", "-N", "-1"});
+		search.setOptions(GreedyOpt[6]);
 		filter14.setEvaluator(eval);
 		filter14.setSearch(search);
 		newData = Filter.useFilter(data, filter14);
-		saveData(newData, datas);
+		datas.add(newData);
 		
-		search.setOptions(new String[] {"-R", "-T", "0.03", "-N", "-1"});
+		search.setOptions(GreedyOpt[7]);
 		filter15.setEvaluator(eval);
 		filter15.setSearch(search);
 		newData = Filter.useFilter(data, filter15);
-		saveData(newData, datas);
+		datas.add(newData);
 		
 		
 
 		filter21.setEvaluator(eval);
 		filter21.setSearch(search);
 		newData = Filter.useFilter(data, filter21);
-		saveData(newData, datas);
+		datas.add(newData);
 		
-		search2.setOptions(new String[] {"-D", "2", "-N", "5"});
+		search2.setOptions(BestOpt[1]);
 		filter22.setEvaluator(eval);
 		filter22.setSearch(search);
 		newData = Filter.useFilter(data, filter22);
-		saveData(newData, datas);
+		datas.add(newData);
 		
-		search2.setOptions(new String[] {"-D", "0", "-N", "5"});
+		search2.setOptions(BestOpt[2]);
 		filter23.setEvaluator(eval);
 		filter23.setSearch(search);
 		newData = Filter.useFilter(data, filter23);
-		saveData(newData, datas);
+		datas.add(newData);
 		
+		return datas;
 	}
 
 	public static ArrayList<Instances> instTest (ArrayList<Instances> datas, Instances data){
@@ -139,36 +146,33 @@ public class selection_variables {
 		return instTest;
 	}
 
-	public static void saveData(Instances data, ArrayList<Instances> datas){
-		datas.add(data);
-	}
-
-/** Exemple permettant de comprendre un peu la classe individuellement 
- * 
+// Exemple permettant de comprendre un peu la classe individuellement 
+ 
 	public static void main(String[] args) throws Exception {
-		ArrayList<Instances> datas = debut();
 		
 		System.out.println("Loading data");		
 		Instances data = chargeDonnees(System.getProperty("user.dir")+"/data_arff/train_set.arff");
 		
 		System.out.println("Filtrage des attributs");
-		filtres(data, datas);
+		ArrayList<Instances> datas = filtres(data);
 		
 		System.out.println(datas.size());
 		for(int i = 0; i < datas.size(); i++){
-			System.out.println("datas.get("+i+").numAttributes() = "+datas.get(i).numAttributes());
+			
+			
+			/*System.out.println("datas.get("+i+").numAttributes() = "+datas.get(i).numAttributes());
 			for(int j = 0; j < datas.get(i).numAttributes(); j++)
 				System.out.print(datas.get(i).attribute(j)+", ");
-			System.out.println();
+			System.out.println();*/
 		}
 		System.out.println("Fin");
 		
-		ArrayList<Instances> instaTest = instTest(datas, data);
+		/*ArrayList<Instances> instaTest = instTest(datas, data);
 		System.out.println(instaTest.size());
 		for(int i = 0; i < instaTest.size(); i++){
 			System.out.println("instaTest.get("+i+").numAttributes() = "+instaTest.get(i).numAttributes());
 		}
-		System.out.println("Fin");
+		System.out.println("Fin");*/
 		
-	}*/
+	}
 }
