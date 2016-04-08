@@ -1,3 +1,8 @@
+/*
+ * Classe de selection de Classifier
+ * @author : Biard David, Barroch?Quentin
+ */
+
 import java.util.ArrayList;
 
 import weka.classifiers.Classifier;
@@ -7,71 +12,128 @@ import weka.classifiers.rules.ConjunctiveRule;
 import weka.classifiers.rules.OneR;
 import weka.classifiers.rules.ZeroR;
 import weka.classifiers.trees.J48;
-import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.Utils;
 
 public class BestClassifierSelector {
-	public ArrayList<Classifier> select(Instances data) throws Exception {
-		ArrayList<Classifier> tabClassifier = new ArrayList<Classifier>();
 
+	/*
+	 * Fonction permettant de choisir les meilleures parametres de trie pour le classifier J48
+	 * @param Instances data : donn?s a tri?
+	 * @return ps : classifier entrainn?sur les donn?s
+	 */
+	public Classifier selectBestJ48(Instances data) throws Exception{
 		// setup classifier
-		System.out.println("Select best options for J48");
-		CVParameterSelection ps = new CVParameterSelection();
-		ps.setClassifier(new J48());
-		ps.setNumFolds(2);  // using 2-fold CV
-		ps.addCVParameter("C 0.1 0.5 5");
+				System.out.println("Select best options for J48");
+				CVParameterSelection ps = new CVParameterSelection();
+				ps.setClassifier(new J48());
+				ps.setNumFolds(2);  // using 2-fold CV
+				ps.addCVParameter("C 0.1 0.5 5");
 
-		// build and output best options
+				// build and output best options
 
-		System.out.println("build J48");
-		ps.buildClassifier(data);		     
-		tabClassifier.add(ps);
-		System.out.println(Utils.joinOptions(ps.getBestClassifierOptions()));
+				System.out.println("build J48");
+				ps.buildClassifier(data);
 
-		ZeroR model2 = new ZeroR();
+				return ps;
+
+	}
+
+	/*
+	 * Fonction permettant de choisir les meilleures parametres de trie pour le classifier J48
+	 * @param Instances data : donn?s a tri?
+	 * @return ps : classifier entrainn?sur les donn?s
+	 */
+	public Classifier selectBestZeroR(Instances data) throws Exception{
+		// setup classifier
+		ZeroR ps = new ZeroR();
 		System.out.println("build ZeroR");
-		model2.buildClassifier(data);
+		ps.buildClassifier(data);
 
+		return ps;
+
+	}
+
+	/*
+	 * Fonction permettant de choisir les meilleures parametres de trie pour le classifier J48
+	 * @param Instances data : donn?s a tri?
+	 * @return ps : classifier entrainn?sur les donn?s
+	 */
+	public Classifier selectBestConjunctive(Instances data) throws Exception{
+		// setup classifier
 		System.out.println("Select best options for ConjunctiveRule");
-		CVParameterSelection ps2 = new CVParameterSelection();
-		ps2.setClassifier(new ConjunctiveRule());
-		ps2.setNumFolds(2);  // using 5-fold CV
-		ps2.addCVParameter("N 2 6 2");
-		ps2.addCVParameter("M 1.0 5.0 4");
-		ps2.addCVParameter("P -1 3 2");
-		ps2.addCVParameter("S 1 5 3");
+		CVParameterSelection ps = new CVParameterSelection();
+		ps.setClassifier(new ConjunctiveRule());
+		ps.setNumFolds(2);  // using 5-fold CV
+		ps.addCVParameter("N 2 6 2");
+		ps.addCVParameter("M 1.0 5.0 4");
+		ps.addCVParameter("P -1 3 2");
+		ps.addCVParameter("S 1 5 3");
 
 		// build and output best options
 		System.out.println("build ConjunctiveRule");
-		ps2.buildClassifier(data);
-		tabClassifier.add(ps2);
+		ps.buildClassifier(data);
 
 
+		return ps;
+
+	}
+
+
+	/*
+	 * Fonction permettant de choisir les meilleures parametres de trie pour le classifier J48
+	 * @param Instances data : donn?s a tri?
+	 * @return ps : classifier entrainn?sur les donn?s
+	 */
+	public Classifier selectBestOneR(Instances data) throws Exception{
 		System.out.println("Select best options for OneR");
-		CVParameterSelection ps3 = new CVParameterSelection();
-		ps3.setClassifier(new OneR());
-		ps3.setNumFolds(2);  // using 5-fold CV
-		ps3.addCVParameter("B 1 10 10");	      
+		CVParameterSelection ps = new CVParameterSelection();
+		ps.setClassifier(new OneR());
+		ps.setNumFolds(2);  // using 5-fold CV
+		ps.addCVParameter("B 1 10 10");
 
 
 		// build and output best options
 		System.out.println("build OneR");
-		ps3.buildClassifier(data);
-		tabClassifier.add(ps3);
+		ps.buildClassifier(data);
 
 
+		return ps;
+	}
+
+	/*
+	 * Fonction permettant de choisir les meilleures parametres de trie pour le classifier J48
+	 * @param Instances data : donn?s a tri?
+	 * @return ps : classifier entrainn?sur les donn?s
+	 */
+	public Classifier selectBestVFI(Instances data) throws Exception{
 		System.out.println("Select best options for VFI");
-		CVParameterSelection ps4 = new CVParameterSelection();
-		ps4.setClassifier(new VFI());
-		ps4.setNumFolds(2);  // using 5-fold CV
-		ps4.addCVParameter("B 0.1 1 20");
+		CVParameterSelection ps = new CVParameterSelection();
+		ps.setClassifier(new VFI());
+		ps.setNumFolds(2);  // using 5-fold CV
+		ps.addCVParameter("B 0.1 1 20");
 
 
 		System.out.println("Build VFI");
 		// build and output best options
-		ps3.buildClassifier(data);
-		tabClassifier.add(ps4);
+		ps.buildClassifier(data);
+
+		return ps;
+	}
+
+
+	/*
+	 * Fonction qui recupere les meilleurs classifier et qui les ajoute dans une ArrauList pour ensuite les envoy?au vote
+	 * @param Instances data : donn?s a tri?
+	 * @return ArrayList<Classifier> tabClassifier : arraylist contenant les meilleurs classifier
+	 */
+	public ArrayList<Classifier> select(Instances data) throws Exception {
+		ArrayList<Classifier> tabClassifier = new ArrayList<Classifier>();
+
+		tabClassifier.add(selectBestJ48(data));
+		tabClassifier.add(selectBestZeroR(data));
+		tabClassifier.add(selectBestConjunctive(data));
+		tabClassifier.add(selectBestOneR(data));
+		tabClassifier.add(selectBestVFI(data));
 
 		return tabClassifier;
 	}
