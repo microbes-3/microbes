@@ -13,8 +13,7 @@ public class Microbes {
 		Instances input = ls.loadDataset(DATASET_PATH);
 		input.setClassIndex(input.numAttributes() - 1);
 
-		ArrayList<Instances> filtered = new ArrayList<Instances>();
-		selection_variables.filtres(input, filtered);
+		ArrayList<Instances> filtered = selection_variables.filtres(input);
 
 		BestClassifierSelector bcs = new BestClassifierSelector();
 		ArrayList<Classifier> classifiers = bcs.select(filtered.get(0));
