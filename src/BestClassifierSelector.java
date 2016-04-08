@@ -12,20 +12,8 @@ import weka.core.Instances;
 import weka.core.Utils;
 
 public class BestClassifierSelector {
-	LoadSave loadSaver;
-
-	public BestClassifierSelector(LoadSave ls) {
-		this.loadSaver = ls;
-	}
-
-	public ArrayList<Classifier> select() throws Exception {
+	public ArrayList<Classifier> select(Instances data) throws Exception {
 		ArrayList<Classifier> tabClassifier = new ArrayList<Classifier>();
-
-		// load data
-		Instances data = this.loadSaver.loadDataset("train_set.arff");;
-		Instances validset = this.loadSaver.loadDataset("valid_set.arff");
-		Instances testset = this.loadSaver.loadDataset("test_set.arff");
-		data.setClassIndex(data.numAttributes() - 1);
 
 		// setup classifier
 		System.out.println("Select best options for J48");
