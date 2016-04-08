@@ -33,7 +33,13 @@ public class ClassifierDecisionMaker implements DecisionMaker {
 	}
 
 	public void train(double[][] votes, double[] results) {
-		FastVector attrs = new FastVector();
+		FastVector attrs = new FastVector(votes[0].length);
+		for (int i = 0; i < votes[0].length; i++) {
+			Attribute attr = new Attribute("classifier_"+i);
+			attrs.addElement(attr);
+		}
+		Attribute resultAttr = new Attribute("result");
+		attrs.addElement(resultAttr);
 
 		Instances instances = new Instances("train_vote", attrs, votes.length);
 		for (int i = 0; i < votes.length; i++) {
