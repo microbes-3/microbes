@@ -11,15 +11,16 @@ public class Microbes {
 		LoadSave ls = new LoadSave();
 
 		System.out.println("Loading dataset...");
-		Instances input = ls.loadDataset(DATASET_PATH);
-		input.setClassIndex(input.numAttributes() - 1);
+		Instances data = ls.loadDataset(DATASET_PATH);
+		data.setClassIndex(data.numAttributes() - 1);
 
 		System.out.println("Filtering attributes...");
-		ArrayList<Instances> filtered = selection_variables.filtres(input);
+		ArrayList<Instances> filtered = selection_variables.filtres(data);
+		data = filtered.get(0); // TODO: get the best one
 
 		System.out.println("Selecting best classifier...");
 		BestClassifierSelector bcs = new BestClassifierSelector();
-		ArrayList<Classifier> classifiers = bcs.select(filtered.get(0));
+		ArrayList<Classifier> classifiers = bcs.select(data);
 
 		System.out.println("Initializing vote...");
 		DecisionMaker dm = new MajorityDecisionMaker();
@@ -27,7 +28,7 @@ public class Microbes {
 
 		System.out.println("Classifying instances...");
 		try {
-			Instance inst = null;
+			Instance inst = data.firstInstance();
 			int result = voter.classifyInstance(inst);
 			System.out.println(result);
 		} catch (Exception e) {
