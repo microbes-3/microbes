@@ -1,4 +1,4 @@
-CLASSPATH=src:/usr/share/java/weka.jar:/usr/share/java/junit4.jar
+CLASSPATH=src:/partage/weka-3-6-13/weka.jar:/usr/share/java/junit4.jar
 MAINCLASS=Microbes
 TESTCLASS=org.junit.runner.JUnitCore
 
