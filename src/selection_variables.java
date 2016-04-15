@@ -172,8 +172,8 @@ public class selection_variables {
 		for(int i = 0; i < datas.size(); i++){
 			cls.buildClassifier(datas.get(i));
 			Instances dataSet = data;
-			for(int j = 0; j < datas.get(i).size(); j++){
-				cls.classifyInstance(datas.get(i).get(j));
+			for(int j = 0; j < datas.get(i).numInstances(); j++){
+				cls.classifyInstance(datas.get(i).instance(j));
 			}
 			Evaluation eval2 = new Evaluation(dataSet);
 			eval2.crossValidateModel(cls, dataSet, 10, new Random(1));
