@@ -4,19 +4,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import weka.core.Instances;
-
-
-public class compareDecisionMaker {
+public class CompareDecisionMaker {
 	private String filePath;
 	private ArrayList<DecisionMaker> dms;
 	
 	
-	public compareDecisionMaker(String path){
+	public CompareDecisionMaker(String path){
 		this.filePath = path;
 	}
 	
-	public compareDecisionMaker(String path, ArrayList<DecisionMaker> dmList){
+	public CompareDecisionMaker(String path, ArrayList<DecisionMaker> dmList){
 		this.filePath = path;
 	}
 	
@@ -36,7 +33,6 @@ public class compareDecisionMaker {
 
 	public void saveCompareDM(HashMap<String, Integer> results) {
 		PrintWriter writer;
-		
 		try {
 			writer = new PrintWriter(this.filePath, "UTF-8");
 		} catch (FileNotFoundException | UnsupportedEncodingException e1) {
