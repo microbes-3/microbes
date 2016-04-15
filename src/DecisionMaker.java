@@ -1,3 +1,3 @@
 public interface DecisionMaker {
-	public int decide(double[] vote);
+	public int decide(int[] vote);
 }

@@ -13,7 +13,7 @@ public class ClassifierDecisionMaker implements DecisionMaker {
 		this.classifier = classifier;
 	}
 
-	private Instance buildInstance(double[] votes, Double result) {
+	private Instance buildInstance(int[] votes, Double result) {
 		Instance inst = new Instance(votes.length + 1);
 		for (int i = 0; i < votes.length; i++) {
 			inst.setValue(i, votes[i]);
@@ -22,7 +22,7 @@ public class ClassifierDecisionMaker implements DecisionMaker {
 		return inst;
 	}
 
-	public int decide(double[] votes) {
+	public int decide(int[] votes) {
 		Instance inst = this.buildInstance(votes, null);
 
 		try {
@@ -32,7 +32,7 @@ public class ClassifierDecisionMaker implements DecisionMaker {
 		}
 	}
 
-	public void train(double[][] votes, double[] results) {
+	public void train(int[][] votes, double[] results) {
 		FastVector attrs = new FastVector(votes[0].length);
 		for (int i = 0; i < votes[0].length; i++) {
 			Attribute attr = new Attribute("classifier_"+i);

@@ -13,7 +13,7 @@ public class WeightedDecisionMaker implements DecisionMaker {
 		this.weights = weights;
 	}
 
-	public int decide(double[] votes) {
+	public int decide(int[] votes) {
 		if (this.weights == null) {
 			throw new RuntimeException("No weights specified");
 		}

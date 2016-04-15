@@ -5,9 +5,9 @@ public class MajorityDecisionMaker implements DecisionMaker {
 
 	public MajorityDecisionMaker() {}
 
-	public int decide(double[] vote) {
-		HashMap<Double, Integer> count = new HashMap<Double, Integer>();
-		for(Double classifierRes : vote){
+	public int decide(int[] vote) {
+		HashMap<Integer, Integer> count = new HashMap<Integer, Integer>();
+		for(Integer classifierRes : vote){
 			if(!count.containsKey(classifierRes)){
 				count.put(classifierRes, 1);
 			}else{
@@ -16,7 +16,7 @@ public class MajorityDecisionMaker implements DecisionMaker {
 		}
 		
 		Integer max = 0;
-		for(Double d : count.keySet()){
+		for(Integer d : count.keySet()){
 			if(count.get(d) > max){
 				max = count.get(d);
 			}

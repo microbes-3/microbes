@@ -8,29 +8,44 @@ public class Voter {
 	private DecisionMaker dm;
 	private ArrayList<Classifier> classifiers;
 
-	public Voter(ArrayList<Classifier> c){
-		this.dm = new MajorityDecisionMaker(); //Default Choice
-		this.classifiers = c;
-	}
-
-	public Voter(DecisionMaker dm, ArrayList<Classifier> c){
+	public Voter(DecisionMaker dm, ArrayList<Classifier> c) {
 		this.dm = dm;
 		this.classifiers = c;
 	}
 
-	public void addClassifier(Classifier c){
+	public void addClassifier(Classifier c) {
 		this.classifiers.add(c);
 	}
 
-	public void setDecisionMaker(DecisionMaker dm){
+	public void setDecisionMaker(DecisionMaker dm) {
 		this.dm = dm;
 	}
 
 	public int classifyInstance(Instance inst) throws Exception {
-		double[] vote = new double[classifiers.size()];
-		for(int i = 0; i < classifiers.size(); i++){
-			vote[i] = classifiers.get(i).classifyInstance(inst);
+		int n = classifiers.size();
+		int[] vote = new int[n];
+		double[] dist = new double[n];
+
+		for (int i = 0; i < n; i++) {
+			double[] instDist = classifiers.get(i).distributionForInstance(inst);
+
+			// TODO: get correct class name
+			int klass = -1;
+			double classDist = 0;
+			for (int j = 0; j < instDist.length; i++) {
+				if (klass == -1 || instDist[j] > classDist) {
+					klass = j;
+					classDist = instDist[j];
+				}
+			}
+
+			vote[i] = klass;
+			dist[i] = classDist;
 		}
-		return dm.decide(vote);
+
+		if (this.dm instanceof DistDecisionMaker) {
+			return ((DistDecisionMaker) this.dm).decide(vote, dist);
+		}
+		return this.dm.decide(vote);
 	}
 }

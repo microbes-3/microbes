@@ -24,7 +24,7 @@ public class CompareDecisionMaker {
 		this.dms.add(dm);
 	}
 
-	public HashMap<String, Integer> compare(double[] vote){
+	public HashMap<String, Integer> compare(int[] vote){
 		HashMap<String, Integer> results = new HashMap<String, Integer>();
 		for(int i = 0; i < this.dms.size(); i++){
 			//Il va falloir gérer les doublons
@@ -54,7 +54,7 @@ public class CompareDecisionMaker {
 	public static void main(String args[]){
 		//A little test
 		CompareDecisionMaker comp = new CompareDecisionMaker("/home/raphael.cornet/Documents/MiniProj/compare.csv");
-		double[] vote = {0,1,2,3,4,5};
+		int[] vote = {0,1,2,3,4,5};
 		MajorityDecisionMaker majority = new MajorityDecisionMaker();
 		majority.decide(vote);
 		
