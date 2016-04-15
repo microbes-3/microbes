@@ -1,11 +1,14 @@
+import weka.classifiers.trees.J48;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.core.Instances;
 import weka.filters.supervised.attribute.AttributeSelection;
 import weka.filters.Filter;
 import weka.attributeSelection.*;
-
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class selection_variables {	
@@ -152,14 +155,30 @@ public class selection_variables {
 		
 		System.out.println("Loading data");		
 		Instances data = chargeDonnees(System.getProperty("user.dir")+"/data_arff/train_set.arff");
-		
+		Instances testSet = chargeDonnees(System.getProperty("user.dir")+"/data_arff/test_set.arff");
 		System.out.println("Filtrage des attributs");
 		ArrayList<Instances> datas = filtres(data);
 		
 		System.out.println(datas.size());
+		Classifier cls = new weka.classifiers.trees.J48();
+		/*cls.buildClassifier(data);
+		System.out.println(cls);
+		 Evaluation eval = new Evaluation(data);
+		 Random rand = new Random(1);  // using seed = 1
+		 int folds = 10;
+		 eval.crossValidateModel(cls, data, folds, rand);
+		 System.out.println(eval.toSummaryString());*/
+		((J48) cls).setOptions(new String[]{"-C", "0.25", "-M", "2"});
 		for(int i = 0; i < datas.size(); i++){
-			
-			
+			cls.buildClassifier(datas.get(i));
+			Instances dataSet = data;
+			for(int j = 0; j < datas.get(i).size(); j++){
+				cls.classifyInstance(datas.get(i).get(j));
+			}
+			Evaluation eval2 = new Evaluation(dataSet);
+			eval2.crossValidateModel(cls, dataSet, 10, new Random(1));
+			System.out.println(eval2.toSummaryString());
+			System.out.println(eval2.toClassDetailsString());
 			/*System.out.println("datas.get("+i+").numAttributes() = "+datas.get(i).numAttributes());
 			for(int j = 0; j < datas.get(i).numAttributes(); j++)
 				System.out.print(datas.get(i).attribute(j)+", ");
