@@ -6,20 +6,20 @@ import weka.core.Instance;
 // Effectue les votes en fonction de differents classifiers et d'un preneur de decision
 public class Voter {
 	private DecisionMaker dm;
-	private ArrayList<Classifier> cList;
+	private ArrayList<Classifier> classifiers;
 
 	public Voter(ArrayList<Classifier> c){
 		this.dm = new MajorityDecisionMaker(); //Default Choice
-		this.cList = c;
+		this.classifiers = c;
 	}
 
 	public Voter(DecisionMaker dm, ArrayList<Classifier> c){
 		this.dm = dm;
-		this.cList = c;
+		this.classifiers = c;
 	}
 
 	public void addClassifier(Classifier c){
-		this.cList.add(c);
+		this.classifiers.add(c);
 	}
 
 	public void setDecisionMaker(DecisionMaker dm){
@@ -27,11 +27,10 @@ public class Voter {
 	}
 
 	public int classifyInstance(Instance inst) throws Exception {
-		double[] vote = new double[cList.size()];
-		for(int i = 0; i < cList.size(); i++){
-			vote[i] = cList.get(i).classifyInstance(inst);
+		double[] vote = new double[classifiers.size()];
+		for(int i = 0; i < classifiers.size(); i++){
+			vote[i] = classifiers.get(i).classifyInstance(inst);
 		}
 		return dm.decide(vote);
 	}
 }
-
