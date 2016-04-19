@@ -4,7 +4,7 @@ TESTCLASS=org.junit.runner.JUnitCore
 
 all: build run
 build:
-	javac -cp $(CLASSPATH) src/*.java
+	javac -cp $(CLASSPATH) -Xlint src/*.java
 run:
 	java -cp $(CLASSPATH) $(MAINCLASS)
 test:

@@ -24,12 +24,16 @@ public class Microbes {
 
 	public static String[] listClasses(Instances data) {
 		Attribute classesAttr = data.attribute(data.classIndex());
+
+		@SuppressWarnings("unchecked")
 		Enumeration<String> classesEnum = classesAttr.enumerateValues();
+
 		String[] classes = new String[classesAttr.numValues()];
 		int i = 0;
 		for (Double val = null; classesEnum.hasMoreElements(); i++) {
 			classes[i] = classesEnum.nextElement();
 		}
+
 		return classes;
 	}
 

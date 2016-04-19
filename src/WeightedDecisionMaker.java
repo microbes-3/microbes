@@ -27,7 +27,7 @@ public class WeightedDecisionMaker implements DecisionMaker {
 		int maxLabel = -1;
 
 		for (int i = 0; i < votes.length; i++) {
-			int vote = (int) votes[i];
+			int vote = votes[i];
 
 			Double old = results.get(vote);
 			if (old == null) {
