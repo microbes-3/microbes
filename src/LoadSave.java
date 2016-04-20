@@ -57,9 +57,9 @@ public class LoadSave {
 		}
 	}
 
-	public Object loadModel(String path) {
+	public Classifier loadModel(String path) {
 		try {
-			return SerializationHelper.read(resolvePath(path));
+			return (Classifier) SerializationHelper.read(resolvePath(path));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

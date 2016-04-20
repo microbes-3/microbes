@@ -18,30 +18,29 @@ public class Microbes {
 
 	public static final String MODELS_DIR = "models";
 
-	private static Instances selectBestAttributes(Instances data) throws Exception {
-		System.out.println("Filtering attributes...");
-		ArrayList<Instances> filtered = selection_variables.filtres(data);
-		return filtered.get(0); // TODO: get the best one
-	}
-
-	private static ArrayList<Classifier> selectBestClassifiers(Instances data) throws Exception {
-		System.out.println("Selecting best classifiers...");
-		BestClassifierSelector bcs = new BestClassifierSelector();
-		return bcs.select(data);
-	}
-
-	public static void selectBest() throws Exception {
+	public static void selectBestAttributes() throws Exception {
 		LoadSave ls = new LoadSave();
 
 		System.out.println("Loading train dataset...");
 		Instances data = ls.loadDataset(TRAINSET);
 
-		// TODO: uncomment this
-		//data = selectBestAttributes(data);
+		System.out.println("Filtering attributes...");
+		ArrayList<Instances> filtered = selection_variables.filtres(data);
+		//filtered.get(0)
 
-		ArrayList<Classifier> classifiers = selectBestClassifiers(data);
+		// TODO: print results
+	}
 
-		// Save classifiers
+	public static void selectBestClassifiers() throws Exception {
+		LoadSave ls = new LoadSave();
+
+		System.out.println("Loading train dataset...");
+		Instances data = ls.loadDataset(TRAINSET);
+
+		System.out.println("Selecting best classifiers...");
+		BestClassifierSelector bcs = new BestClassifierSelector();
+		ArrayList<Classifier> classifiers = bcs.select(data);
+
 		System.out.println("Saving models...");
 
 		File modelsDir = new File(MODELS_DIR);
@@ -56,8 +55,6 @@ public class Microbes {
 		for (int i = 0; i < classifiers.size(); i++) {
 			ls.saveModel(classifiers.get(i), MODELS_DIR + "/" + i + ".model");
 		}
-
-		System.out.println("Done!");
 	}
 
 	private static void classify(Voter voter, Instances data) throws Exception {
@@ -78,13 +75,11 @@ public class Microbes {
 		System.out.println("Loading valid dataset...");
 		Instances validData = ls.loadDataset(VALIDSET);
 
-		System.out.println("Building classifiers...");
+		System.out.println("Loading classifiers...");
 		ArrayList<Classifier> classifiers = new ArrayList<Classifier>();
-		classifiers.add(new ZeroR());
-		classifiers.add(new OneR());
-
-		for (Classifier c : classifiers) {
-			c.buildClassifier(trainData);
+		File modelsDir = new File(MODELS_DIR);
+		for (File modelFile : modelsDir.listFiles()) {
+			classifiers.add(ls.loadModel(modelFile.getAbsolutePath()));
 			System.out.print(".");
 		}
 		System.out.println(" done");
@@ -101,11 +96,29 @@ public class Microbes {
 		System.out.println("Writing results to output files...");
 		ls.saveResults(testData, TESTSET_PREDICT);
 		ls.saveResults(validData, VALIDSET_PREDICT);
-
-		System.out.println("Done!");
 	}
 
 	public static void main(String[] args) throws Exception {
-		selectBest();
+		String action = "";
+		if (args.length > 0) {
+			action = args[0];
+		}
+
+		switch (action) {
+		case "select-features":
+			selectBestAttributes();
+			break;
+		case "build-models":
+			selectBestClassifiers();
+			break;
+		case "classify":
+			trainAndClassify();
+			break;
+		default:
+			System.out.println("Usage: microbes select-features|build-models|classify");
+			return;
+		}
+
+		System.out.println("Done!");
 	}
 }
