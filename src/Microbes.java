@@ -4,9 +4,7 @@ import java.io.File;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
-
-import weka.classifiers.rules.OneR;
-import weka.classifiers.rules.ZeroR;
+import weka.core.Attribute;
 
 public class Microbes {
 	public static final String TRAINSET = "train_set.arff";
@@ -16,19 +14,26 @@ public class Microbes {
 	public static final String TESTSET_PREDICT = "test.predict";
 	public static final String VALIDSET_PREDICT = "valid.predict";
 
-	public static final String MODELS_DIR = "models";
+	public static final String CLASSIFIERS_DIR = "classifiers";
 
-	public static void selectBestAttributes() throws Exception {
+	public static void selectBestFeatures() throws Exception {
 		LoadSave ls = new LoadSave();
 
 		System.out.println("Loading train dataset...");
 		Instances data = ls.loadDataset(TRAINSET);
 
 		System.out.println("Filtering attributes...");
-		ArrayList<Instances> filtered = selection_variables.filtres(data);
-		//filtered.get(0)
+		ArrayList<Attribute[]> attributes = FeaturesSelection.select(data);
 
-		// TODO: print results
+		System.out.println("Results:");
+		for (Attribute[] attrs : attributes) {
+			System.out.print("*");
+			for (Attribute attr : attrs) {
+				if (attr == null) continue; // TODO: why is this happening?
+				System.out.print(" " + attr.name());
+			}
+			System.out.println("");
+		}
 	}
 
 	public static void selectBestClassifiers() throws Exception {
@@ -43,7 +48,7 @@ public class Microbes {
 
 		System.out.println("Saving models...");
 
-		File modelsDir = new File(MODELS_DIR);
+		File modelsDir = new File(CLASSIFIERS_DIR);
 		modelsDir.mkdir(); // Ensure models dir exists
 
 		// Empty dir
@@ -53,7 +58,7 @@ public class Microbes {
 
 		// Write models data
 		for (int i = 0; i < classifiers.size(); i++) {
-			ls.saveModel(classifiers.get(i), MODELS_DIR + "/" + i + ".model");
+			ls.saveModel(classifiers.get(i), CLASSIFIERS_DIR + "/" + i + ".model");
 		}
 	}
 
@@ -77,15 +82,15 @@ public class Microbes {
 
 		System.out.println("Loading classifiers...");
 		ArrayList<Classifier> classifiers = new ArrayList<Classifier>();
-		File modelsDir = new File(MODELS_DIR);
+		File modelsDir = new File(CLASSIFIERS_DIR);
 		for (File modelFile : modelsDir.listFiles()) {
-			classifiers.add(ls.loadModel(modelFile.getAbsolutePath()));
+			classifiers.add((Classifier) ls.loadModel(modelFile.getAbsolutePath()));
 			System.out.print(".");
 		}
 		System.out.println(" done");
 
 		System.out.println("Initializing vote...");
-		DecisionMaker dm = new MajorityDecisionMaker();
+		DecisionMaker dm = new DistWeightedDecisionMaker();
 		Voter voter = new Voter(dm, classifiers);
 
 		System.out.println("Classifying test instances...");
@@ -106,7 +111,7 @@ public class Microbes {
 
 		switch (action) {
 		case "select-features":
-			selectBestAttributes();
+			selectBestFeatures();
 			break;
 		case "build-models":
 			selectBestClassifiers();

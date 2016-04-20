@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Serializable;
 import java.util.Enumeration;
 
 import weka.classifiers.Classifier;
@@ -57,16 +58,16 @@ public class LoadSave {
 		}
 	}
 
-	public Classifier loadModel(String path) {
+	public Object loadModel(String path) {
 		try {
-			return (Classifier) SerializationHelper.read(resolvePath(path));
+			return SerializationHelper.read(resolvePath(path));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	public void saveModel(Classifier model, String path) {
+	public void saveModel(Serializable model, String path) {
 		try {
 			SerializationHelper.write(resolvePath(path), model);
 		} catch (Exception e) {
