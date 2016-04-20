@@ -30,6 +30,18 @@ public class LoadSave {
 		return classes;
 	}
 
+	public static Attribute[] listAttributes(Instances data) {
+		@SuppressWarnings("unchecked")
+		Enumeration<Attribute> attrsEnum = data.enumerateAttributes();
+
+		Attribute[] attrs = new Attribute[data.numAttributes()];
+		for (int j = 0; attrsEnum.hasMoreElements(); j++) {
+			attrs[j] = attrsEnum.nextElement();
+		}
+
+		return attrs;
+	}
+
 	public String resolvePath(String path) {
 		return path.replaceAll("~", System.getProperty("user.home"));
 	}

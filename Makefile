@@ -13,11 +13,12 @@ run:
 	$(RUN)
 select-features:
 	$(RUN) select-features
-build-models:
-	$(RUN) build-models
+build-classifiers:
+	$(RUN) build-classifiers
 classify:
 	$(RUN) classify
 test:
 	java -cp $(CLASSPATH) $(TESTCLASS) $(TESTTARGETS)
 zip:
-	zip -r submission.zip src *.predict Makefile README.md .classpath .project
+	rm submission.zip
+	zip -r submission.zip src *.predict Makefile README.md .classpath .project -x src/*.class

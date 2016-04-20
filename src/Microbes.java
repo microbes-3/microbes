@@ -16,6 +16,8 @@ public class Microbes {
 
 	public static final String CLASSIFIERS_DIR = "classifiers";
 
+	public static String[] filteredAttributes = new String[]{"num_medications", "discharge_disposition_id", "num_lab_procedures", "num_procedures", "number_diagnoses", "diag_1", "diag_3", "insulin", "diag_2", "number_inpatient", "glipizide", "admission_source_id", "A1Cresult", "glyburide", "pioglitazone", "repaglinide", "change", "glimepiride", "rosiglitazone", "age", "readmitted", "acetohexamide", "chlorpropamide", "number_outpatient", "metformin-rosiglitazone", "troglitazone", "max_glu_serum", "metformin-pioglitazone", "acarbose", "glipizide-metformin"};
+
 	public static void selectBestFeatures() throws Exception {
 		LoadSave ls = new LoadSave();
 
@@ -42,6 +44,9 @@ public class Microbes {
 		System.out.println("Loading train dataset...");
 		Instances data = ls.loadDataset(TRAINSET);
 
+		System.out.println("Filtering attributes...");
+		filterAttributes(data);
+
 		System.out.println("Selecting best classifiers...");
 		BestClassifierSelector bcs = new BestClassifierSelector();
 		ArrayList<Classifier> classifiers = bcs.select(data);
@@ -62,6 +67,26 @@ public class Microbes {
 		}
 	}
 
+	private static void filterAttributes(Instances data) {
+		Attribute[] attrs = LoadSave.listAttributes(data);
+		for (int i = attrs.length - 1; i >= 0; i--) {
+			Attribute attr = attrs[i];
+			if (attr == null) continue; // TODO: why is this even happening?
+
+			boolean found = false;
+			for (String name : filteredAttributes) {
+				if (attr.name().equals(name)) {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				data.deleteAttributeAt(attr.index());
+			}
+		}
+	}
+
 	private static void classify(Voter voter, Instances data) throws Exception {
 		for (int i = 0; i < data.numInstances(); i++) {
 			Instance inst = data.instance(i);
@@ -79,6 +104,11 @@ public class Microbes {
 		Instances testData = ls.loadDataset(TESTSET);
 		System.out.println("Loading valid dataset...");
 		Instances validData = ls.loadDataset(VALIDSET);
+
+		System.out.println("Selecting " + filteredAttributes.length + "/" + trainData.numAttributes() + " attributes...");
+		filterAttributes(trainData);
+		filterAttributes(testData);
+		filterAttributes(validData);
 
 		System.out.println("Loading classifiers...");
 		ArrayList<Classifier> classifiers = new ArrayList<Classifier>();
@@ -113,14 +143,14 @@ public class Microbes {
 		case "select-features":
 			selectBestFeatures();
 			break;
-		case "build-models":
+		case "build-classifiers":
 			selectBestClassifiers();
 			break;
 		case "classify":
 			trainAndClassify();
 			break;
 		default:
-			System.out.println("Usage: microbes select-features|build-models|classify");
+			System.out.println("Usage: microbes select-features|build-classifiers|classify");
 			return;
 		}
 

@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Enumeration;
 
 public class FeaturesSelection {
 	protected static ArrayList<Attribute[]> select(Instances data) throws Exception {
@@ -58,16 +57,7 @@ public class FeaturesSelection {
 			selection.batchFinished();
 
 			Instances format = selection.getOutputFormat();
-
-			@SuppressWarnings("unchecked")
-			Enumeration<Attribute> attrsEnum = format.enumerateAttributes();
-
-			Attribute[] attrs = new Attribute[format.numAttributes()];
-			for (int j = 0; attrsEnum.hasMoreElements(); j++) {
-				attrs[j] = attrsEnum.nextElement();
-			}
-
-			attributes.add(attrs);
+			attributes.add(LoadSave.listAttributes(format));
 
 			System.out.print(".");
 		}
