@@ -41,13 +41,15 @@ public class ClassifierDecisionMaker implements DecisionMaker {
 		Attribute resultAttr = new Attribute("result");
 		attrs.addElement(resultAttr);
 
-		Instances instances = new Instances("train_vote", attrs, votes.length);
+		Instances data = new Instances("train_vote", attrs, votes.length);
+		data.setClassIndex(data.numAttributes() - 1);
+
 		for (int i = 0; i < votes.length; i++) {
-			instances.add(this.buildInstance(votes[i], results[i]));
+			data.add(this.buildInstance(votes[i], results[i]));
 		}
 
 		try {
-			this.classifier.buildClassifier(instances);
+			this.classifier.buildClassifier(data);
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot build classifier: "+e.getMessage());
 		}

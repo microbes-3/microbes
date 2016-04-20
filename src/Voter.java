@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-import weka.classifiers.*;
+import weka.classifiers.Classifier;
 import weka.core.Instance;
 
 // Effectue les votes en fonction de differents classifiers et d'un preneur de decision
@@ -29,10 +29,9 @@ public class Voter {
 		for (int i = 0; i < n; i++) {
 			double[] instDist = classifiers.get(i).distributionForInstance(inst);
 
-			// TODO: get correct class name
 			int klass = -1;
 			double classDist = 0;
-			for (int j = 0; j < instDist.length; i++) {
+			for (int j = 0; j < instDist.length; j++) {
 				if (klass == -1 || instDist[j] > classDist) {
 					klass = j;
 					classDist = instDist[j];

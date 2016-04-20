@@ -8,6 +8,7 @@ import weka.core.Instances;
 import weka.core.Attribute;
 
 import weka.classifiers.rules.OneR;
+import weka.classifiers.rules.ZeroR;
 
 public class Microbes {
 	public static final String DATASET_PATH = "./train_set.arff";
@@ -49,7 +50,7 @@ public class Microbes {
 		return bcs.select(data);
 	}
 
-	public static void main(String[] args) throws Exception {
+	/*public static void main(String[] args) throws Exception {
 		Instances data = load();
 
 		data = filterAttributes(data);
@@ -69,27 +70,36 @@ public class Microbes {
 		}
 
 		System.out.println("Done!");
-	}
+	}*/
 
-	/*public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		Instances data = load();
 		String[] classes = listClasses(data);
 
-		Classifier classifier = new OneR();
-		classifier.buildClassifier(data);
+		System.out.println("Building classifiers...");
+		ArrayList<Classifier> classifiers = new ArrayList<Classifier>();
+		classifiers.add(new ZeroR());
+		classifiers.add(new OneR());
+
+		for (Classifier c : classifiers) {
+			c.buildClassifier(data);
+			System.out.print(".");
+		}
+		System.out.println(" done");
+
+		System.out.println("Initializing vote...");
+		DecisionMaker dm = new MajorityDecisionMaker();
+		Voter voter = new Voter(dm, classifiers);
 
 		System.out.println("Classifying instances...");
 		try {
 			Instance inst = data.firstInstance();
-
-			double[] dist = classifier.distributionForInstance(inst);
-			for (int i = 0; i < classes.length; i++) {
-				System.out.println(classes[i] + ": " + dist[i]);
-			}
+			int result = voter.classifyInstance(inst);
+			System.out.println(result);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		System.out.println("Done!");
-	}*/
+	}
 }

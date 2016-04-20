@@ -1,11 +1,13 @@
 CLASSPATH=src:/usr/share/java/weka.jar:/usr/share/java/junit4.jar
-MAINCLASS=Microbes
 TESTCLASS=org.junit.runner.JUnitCore
+MAINCLASS=Microbes
+TARGETS=src/*.java
+TESTTARGETS=VoterTest WeightedDecisionMakerTest
 
-all: build run
+all: build
 build:
-	javac -cp $(CLASSPATH) -Xlint src/*.java
+	javac -cp $(CLASSPATH) -Xlint $(TARGETS)
 run:
 	java -cp $(CLASSPATH) $(MAINCLASS)
 test:
-	java -cp $(CLASSPATH) $(TESTCLASS) WeightedDecisionMakerTest
+	java -cp $(CLASSPATH) $(TESTCLASS) $(TESTTARGETS)
