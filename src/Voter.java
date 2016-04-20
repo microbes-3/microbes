@@ -23,28 +23,33 @@ public class Voter {
 
 	public int classifyInstance(Instance inst) throws Exception {
 		int n = classifiers.size();
-		int[] vote = new int[n];
-		double[] dist = new double[n];
+		int[] votes = new int[n];
+		double[][] dists = new double[n][inst.numClasses()];
+
+		boolean useDists = (this.dm instanceof DistDecisionMaker);
 
 		for (int i = 0; i < n; i++) {
-			double[] instDist = classifiers.get(i).distributionForInstance(inst);
+			double[] dist = classifiers.get(i).distributionForInstance(inst);
 
-			int klass = -1;
-			double classDist = 0;
-			for (int j = 0; j < instDist.length; j++) {
-				if (klass == -1 || instDist[j] > classDist) {
-					klass = j;
-					classDist = instDist[j];
+			if (useDists) {
+				dists[i] = dist;
+			} else {
+				int classIndex = -1;
+				double classWeight = 0;
+				for (int j = 0; j < dist.length; j++) {
+					if (classIndex == -1 || dist[j] > classWeight) {
+						classIndex = j;
+						classWeight = dist[j];
+					}
 				}
+				votes[i] = classIndex;
 			}
-
-			vote[i] = klass;
-			dist[i] = classDist;
 		}
 
-		if (this.dm instanceof DistDecisionMaker) {
-			return ((DistDecisionMaker) this.dm).decide(vote, dist);
+		if (useDists) {
+			return ((DistDecisionMaker) this.dm).decide(dists);
+		} else {
+			return this.dm.decide(votes);
 		}
-		return this.dm.decide(vote);
 	}
 }

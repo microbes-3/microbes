@@ -3,15 +3,32 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
 
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.Attribute;
 import weka.core.SerializationHelper;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSource;
 
 public class LoadSave {
+	public static String[] listClasses(Instances data) {
+		Attribute classesAttr = data.attribute(data.classIndex());
+
+		@SuppressWarnings("unchecked")
+		Enumeration<String> classesEnum = classesAttr.enumerateValues();
+
+		String[] classes = new String[classesAttr.numValues()];
+		int i = 0;
+		for (Double val = null; classesEnum.hasMoreElements(); i++) {
+			classes[i] = classesEnum.nextElement();
+		}
+
+		return classes;
+	}
+
 	public String resolvePath(String path) {
 		return path.replaceAll("~", System.getProperty("user.home"));
 	}
@@ -20,7 +37,7 @@ public class LoadSave {
 		try {
 			DataSource source = new DataSource(resolvePath(path));
 			Instances dataset = source.getDataSet();
-			dataset.setClassIndex(dataset.numAttributes()-1);
+			dataset.setClassIndex(dataset.numAttributes() - 1);
 			return dataset;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,10 +83,12 @@ public class LoadSave {
 			return;
 		}
 
+		String[] classes = listClasses(set);
+
 		for (int i = 0; i < set.numInstances(); i++) {
 			try {
-				double pred = set.instance(i).classValue();
-				writer.println(pred);
+				int classIndex = (int) set.instance(i).classValue();
+				writer.println(classes[classIndex]);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

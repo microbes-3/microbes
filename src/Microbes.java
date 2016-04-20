@@ -1,42 +1,18 @@
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.lang.Double;
 
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.Attribute;
 
 import weka.classifiers.rules.OneR;
 import weka.classifiers.rules.ZeroR;
 
 public class Microbes {
-	public static final String DATASET_PATH = "./train_set.arff";
-
-	public static Instances load() {
-		LoadSave ls = new LoadSave();
-
-		System.out.println("Loading dataset...");
-		Instances data = ls.loadDataset(DATASET_PATH);
-		data.setClassIndex(data.numAttributes() - 1);
-
-		return data;
-	}
-
-	public static String[] listClasses(Instances data) {
-		Attribute classesAttr = data.attribute(data.classIndex());
-
-		@SuppressWarnings("unchecked")
-		Enumeration<String> classesEnum = classesAttr.enumerateValues();
-
-		String[] classes = new String[classesAttr.numValues()];
-		int i = 0;
-		for (Double val = null; classesEnum.hasMoreElements(); i++) {
-			classes[i] = classesEnum.nextElement();
-		}
-
-		return classes;
-	}
+	public static final String TRAINSET_PATH = "./train_set.arff";
+	public static final String TESTSET_PATH = "./test_set.arff";
+	public static final String VALIDSET_PATH = "./valid_set.arff";
+	public static final String TESTSET_PREDICT_PATH = "./test.predict";
+	public static final String VALIDSET_PREDICT_PATH = "./valid.predict";
 
 	public static Instances filterAttributes(Instances data) throws Exception {
 		System.out.println("Filtering attributes...");
@@ -48,6 +24,14 @@ public class Microbes {
 		System.out.println("Selecting best classifiers...");
 		BestClassifierSelector bcs = new BestClassifierSelector();
 		return bcs.select(data);
+	}
+
+	public static void classify(Voter voter, Instances data) throws Exception {
+		for (int i = 0; i < data.numInstances(); i++) {
+			Instance inst = data.instance(i);
+			int classIndex = voter.classifyInstance(inst);
+			inst.setClassValue((double) classIndex);
+		}
 	}
 
 	/*public static void main(String[] args) throws Exception {
@@ -73,8 +57,13 @@ public class Microbes {
 	}*/
 
 	public static void main(String[] args) throws Exception {
-		Instances data = load();
-		String[] classes = listClasses(data);
+		LoadSave ls = new LoadSave();
+
+		System.out.println("Loading train dataset...");
+		Instances trainData = ls.loadDataset(TRAINSET_PATH);
+
+		System.out.println("Loading test dataset...");
+		Instances testData = ls.loadDataset(TESTSET_PATH);
 
 		System.out.println("Building classifiers...");
 		ArrayList<Classifier> classifiers = new ArrayList<Classifier>();
@@ -82,7 +71,7 @@ public class Microbes {
 		classifiers.add(new OneR());
 
 		for (Classifier c : classifiers) {
-			c.buildClassifier(data);
+			c.buildClassifier(trainData);
 			System.out.print(".");
 		}
 		System.out.println(" done");
@@ -92,13 +81,10 @@ public class Microbes {
 		Voter voter = new Voter(dm, classifiers);
 
 		System.out.println("Classifying instances...");
-		try {
-			Instance inst = data.firstInstance();
-			int result = voter.classifyInstance(inst);
-			System.out.println(result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		classify(voter, testData);
+
+		System.out.println("Writing results to output file...");
+		ls.saveResults(testData, TESTSET_PREDICT_PATH);
 
 		System.out.println("Done!");
 	}

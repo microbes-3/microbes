@@ -3,26 +3,30 @@ import java.util.HashMap;
 public class DistWeightedDecisionMaker extends DistDecisionMaker {
 	public DistWeightedDecisionMaker() {}
 
-	public int decide(int[] votes, double[] dists) {
+	public int decide(double[][] votes) {
 		HashMap<Integer, Double> results = new HashMap<Integer, Double>();
 
 		double max = 0;
 		int maxLabel = -1;
 
 		for (int i = 0; i < votes.length; i++) {
-			int vote = votes[i];
+			double[] vote = votes[i];
 
-			Double old = results.get(vote);
-			if (old == null) {
-				old = 0.;
-			}
+			for (int classIndex = 0; classIndex < vote.length; classIndex++) {
+				double weight = vote[classIndex];
 
-			double result = old + dists[i];
-			results.put(vote, result);
+				Double old = results.get(classIndex);
+				if (old == null) {
+					old = 0.;
+				}
 
-			if (result > max) {
-				max = result;
-				maxLabel = vote;
+				double result = old + weight;
+				results.put(classIndex, result);
+
+				if (result > max) {
+					max = result;
+					maxLabel = classIndex;
+				}
 			}
 		}
 
