@@ -96,16 +96,4 @@ public class LoadSave {
 
 		writer.close();
 	}
-
-	public void classify(Instances set, Classifier model) {
-		for (int i = 0; i < set.numInstances(); i++) {
-			try {
-				Instance inst = set.instance(i);
-				double pred = model.classifyInstance(inst);
-				inst.setClassValue(pred);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
 }
