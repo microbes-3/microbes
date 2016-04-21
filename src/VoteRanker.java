@@ -10,6 +10,7 @@ import weka.core.Instances;
 public class VoteRanker {
 	private ArrayList<Voter> voters = new ArrayList<Voter>();
 	private HashMap<Integer, Double> results = new HashMap<Integer, Double>();
+	private double total = 0;
 
 	public VoteRanker() {}
 
@@ -38,6 +39,8 @@ public class VoteRanker {
 				this.results.put(i, rank + 1);
 			}
 		}
+
+		this.total++;
 	}
 
 	public void rankInstances(Instances data) throws Exception {
@@ -56,7 +59,7 @@ public class VoteRanker {
 		}
 
 		for (int i = 0; i < this.results.size(); i++){
-			writer.println("" + i + "," + this.results.get(i));
+			writer.println("" + i + "," + (this.results.get(i) / this.total));
 		}
 		writer.close();
 	}
