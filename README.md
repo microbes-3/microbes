@@ -15,4 +15,5 @@ make build-classifiers # Build classifiers with best params
 make classify # Classify test & valid data
 
 make zip # Create a zip file for submission
+make rank-voters # Create graphs for voters
 ```
