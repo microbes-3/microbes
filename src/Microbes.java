@@ -140,6 +140,9 @@ public class Microbes {
 	}
 
 	public static void rankVoters() throws Exception {
+		// Taux de succès de chaque classifier, d'après le tableau
+		double[] successRates = new double[]{61.96, 50, 0, 57.86, 0, 71.51, 72.40, 66.6};
+
 		LoadSave ls = new LoadSave();
 
 		System.out.println("Loading train dataset...");
@@ -155,7 +158,7 @@ public class Microbes {
 
 		ArrayList<DecisionMaker> dms = new ArrayList<DecisionMaker>();
 		dms.add(new MajorityDecisionMaker());
-		dms.add(new WeightedDecisionMaker(new double[]{1.0, 0.1, 0.5, 0.3, 0.7}));
+		dms.add(new WeightedDecisionMaker(successRates));
 		dms.add(new DistWeightedDecisionMaker());
 
 		VoteRanker ranker = new VoteRanker();
