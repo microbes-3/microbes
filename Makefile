@@ -17,6 +17,8 @@ build-classifiers:
 	$(RUN) build-classifiers
 classify:
 	$(RUN) classify
+rank-voters:
+	$(RUN) rank-voters
 test:
 	java -cp $(CLASSPATH) $(TESTCLASS) $(TESTTARGETS)
 zip:

@@ -87,6 +87,18 @@ public class Microbes {
 		}
 	}
 
+	private static ArrayList<Classifier> loadClassifiers(LoadSave ls) {
+		ArrayList<Classifier> classifiers = new ArrayList<Classifier>();
+		File modelsDir = new File(CLASSIFIERS_DIR);
+		for (File modelFile : modelsDir.listFiles()) {
+			classifiers.add((Classifier) ls.loadModel(modelFile.getAbsolutePath()));
+			System.out.print(".");
+		}
+		System.out.println(" done");
+
+		return classifiers;
+	}
+
 	private static void classify(Voter voter, Instances data) throws Exception {
 		for (int i = 0; i < data.numInstances(); i++) {
 			Instance inst = data.instance(i);
@@ -111,13 +123,7 @@ public class Microbes {
 		filterAttributes(validData);
 
 		System.out.println("Loading classifiers...");
-		ArrayList<Classifier> classifiers = new ArrayList<Classifier>();
-		File modelsDir = new File(CLASSIFIERS_DIR);
-		for (File modelFile : modelsDir.listFiles()) {
-			classifiers.add((Classifier) ls.loadModel(modelFile.getAbsolutePath()));
-			System.out.print(".");
-		}
-		System.out.println(" done");
+		ArrayList<Classifier> classifiers = loadClassifiers(ls);
 
 		System.out.println("Initializing vote...");
 		DecisionMaker dm = new DistWeightedDecisionMaker();
@@ -131,6 +137,38 @@ public class Microbes {
 		System.out.println("Writing results to output files...");
 		ls.saveResults(testData, TESTSET_PREDICT);
 		ls.saveResults(validData, VALIDSET_PREDICT);
+	}
+
+	public static void rankVoters() throws Exception {
+		LoadSave ls = new LoadSave();
+
+		System.out.println("Loading train dataset...");
+		Instances trainData = ls.loadDataset(TRAINSET);
+
+		System.out.println("Selecting attributes...");
+		filterAttributes(trainData);
+
+		System.out.println("Loading classifiers...");
+		ArrayList<Classifier> classifiers = loadClassifiers(ls);
+
+		System.out.println("Initializing vote...");
+
+		ArrayList<DecisionMaker> dms = new ArrayList<DecisionMaker>();
+		dms.add(new MajorityDecisionMaker());
+		dms.add(new WeightedDecisionMaker(new double[]{1.0, 0.1, 0.5, 0.3, 0.7}));
+		dms.add(new DistWeightedDecisionMaker());
+
+		VoteRanker ranker = new VoteRanker();
+		for (DecisionMaker dm : dms) {
+			Voter voter = new Voter(dm, classifiers);
+			ranker.addVoter(voter);
+		}
+
+		System.out.println("Ranking voters...");
+		ranker.rankInstances(trainData);
+
+		System.out.println("Writing results to output file...");
+		ranker.save("vote-rank.csv");
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -148,6 +186,9 @@ public class Microbes {
 			break;
 		case "classify":
 			trainAndClassify();
+			break;
+		case "rank-voters":
+			rankVoters();
 			break;
 		default:
 			System.out.println("Usage: microbes select-features|build-classifiers|classify");
