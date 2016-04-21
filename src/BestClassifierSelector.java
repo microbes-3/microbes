@@ -144,19 +144,12 @@ public class BestClassifierSelector {
 	public Classifier selectBestRBFNetwork(Instances data) throws Exception {
 		System.out.println("Build RBFNetwork");
 
-		CVParameterSelection ps = new CVParameterSelection();
-		ps.setClassifier(new RBFNetwork());
-		ps.setNumFolds(2);
-		ps.addCVParameter("B 1 2 3");
-		ps.addCVParameter("S 1 2 3");
-		ps.addCVParameter("R 1.0E-9 1.0E-8 1.0E-7");
-		ps.addCVParameter("M -1 -2 -3");
-		ps.addCVParameter("W 0.1 0.2 0.3");
+		Classifier c = new RBFNetwork();
+		c.setOptions(new String[]{"-S", "1", "-R", "1.0E-8", "-M", "-1", "-W", "0.1", "-B", "1"});
 
-		// build and output best options
-		ps.buildClassifier(data);
+		c.buildClassifier(data);
 
-		return ps;
+		return c;
 	}
 
 

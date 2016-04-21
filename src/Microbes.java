@@ -57,13 +57,15 @@ public class Microbes {
 		modelsDir.mkdir(); // Ensure models dir exists
 
 		// Empty dir
-		for (File file : modelsDir.listFiles()) {
-			file.delete();
-		}
+		//for (File file : modelsDir.listFiles()) {
+		//	file.delete();
+		//}
 
 		// Write models data
 		for (int i = 0; i < classifiers.size(); i++) {
-			ls.saveModel(classifiers.get(i), CLASSIFIERS_DIR + "/" + i + ".model");
+			Classifier c = classifiers.get(i);
+			if (c == null) continue;
+			ls.saveModel(c, CLASSIFIERS_DIR + "/" + i + ".model");
 		}
 	}
 
